@@ -2,7 +2,7 @@
   "name": "generator-code",
   "version": "1.0.0",
   "description": "admin echarts",
-  "author": "hanjiangxueying <724518201@qq.com>",
+  "author": "changchidong <1206214477@qq.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
