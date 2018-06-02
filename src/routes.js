@@ -6,6 +6,7 @@ import Mysql from './pages/gen/Mysql.vue'
 import Table from './pages/gen/Table.vue'
 import Form from './pages/gen/Form.vue'
 import user from './pages/gen/user.vue'
+import Doc from './pages/gen/Doc.vue'
 import echarts from './pages/charts/echarts.vue'
 
 let routes = [{
@@ -31,6 +32,7 @@ let routes = [{
             { path: '/mysql', component: Mysql, name: '数据库' },
             { path: '/user', component: user, name: '接口文档' },
             { path: '/table', component: Table, name: '列表' },
+            { path: '/doc', component: Doc, name: '文档' },
         ]
     },
 
