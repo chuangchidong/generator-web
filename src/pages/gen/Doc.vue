@@ -9,7 +9,11 @@
                         项目列表
                     </p>
                     <div class="edittable-table-height-con">
-                        <can-edit-table refs="table0" @on-delete="handleDel" v-model="tableProjectData" :columns-list="tableProjectColumns"></can-edit-table>
+                        <can-edit-table refs="table0" 
+                            :edit-incell="true" 
+                            v-model="tableProjectData" 
+                            v-on:selectionClick ="selectionProjectClick"
+                            :columns-list="tableProjectColumns"  stripe border></can-edit-table>
                     </div>
                 </Card>
             </Col>
@@ -20,41 +24,22 @@
                         模块列表
                     </p>
                     <div class="edittable-con-1">
-                        <can-edit-table refs="table1" @on-delete="handleDel" v-model="tableData" :columns-list="columnsList"></can-edit-table>
+                        <can-edit-table refs="table1" 
+                            :edit-incell="true" 
+                            v-model="tableModuleData" 
+                            v-on:selectionClick ='selectionModuleClick'
+                            :columns-list="tableModuleColumns"></can-edit-table>
                     </div>
                 </Card>
             </Col>
         </Row>
-        <Row class="margin-top-10">
-            <Col span="12">
-                <Card>
-                    <p slot="title">
-                        <Icon type="android-remove"></Icon>
-                        可编辑单元行
-                    </p>
-                    <div class="edittable-table-height-con">
-                        <can-edit-table refs="table2" v-model="editInlineData" :columns-list="editInlineColumns"></can-edit-table>
-                    </div>
-                </Card>
-            </Col>
-            <Col span="12" class="padding-left-10">
-                <Card>
-                    <p slot="title">
-                        <Icon type="android-more-horizontal"></Icon>
-                        可编辑单元格(鼠标移入显示编辑单元格按钮)
-                    </p>
-                    <div class="edittable-table-height-con">
-                        <can-edit-table refs="table3" v-model="editIncellData" :hover-show="true" :edit-incell="true" :columns-list="editIncellColumns"></can-edit-table>
-                    </div>
-                </Card>
-            </Col>
-        </Row>
+
         <Row class="margin-top-10">
             <Col span="24">
                 <Card>
                     <p slot="title">
                         <Icon type="ios-keypad"></Icon>
-                         单元行和单元格两种方式编辑(始终显示编辑单元格按钮)
+                         接口文档
                     </p>
                     <Row :gutter="10">
                         <Col span="2">
@@ -65,28 +50,77 @@
                         <Col span="22">
                             <div class="edittable-table-height-con">
                                 <can-edit-table 
-                                    refs="table4" 
-                                    v-model="editInlineAndCellData" 
+                                    refs="table2" 
+                                    v-model="tableApiData" 
                                     @on-cell-change="handleCellChange" 
                                     @on-change="handleChange"  
+                                    v-on:selectionClick ='selectionApiClick'
                                     :editIncell="true" 
-                                    :columns-list="editInlineAndCellColumn"
+                                    :columns-list="tableApiColumns"
                                 ></can-edit-table>
+
+                                <!-- <can-edit-table refs="table1" :edit-incell="true" v-model="tableModuleData" :columns-list="tableModuleColumns"></can-edit-table> -->
                             </div>
                         </Col>
                         <Modal :width="900" v-model="showCurrentTableData">
-                            <can-edit-table refs="table5" v-model="editInlineAndCellData" :columns-list="showCurrentColumns"></can-edit-table>
+                            <!-- <can-edit-table refs="table5" v-model="editInlineAndCellData" :columns-list="showCurrentColumns"></can-edit-table> -->
                         </Modal>
                     </Row>
                 </Card>
             </Col>
         </Row>
+
+
+
+        <Row class="margin-top-10">
+            <Col span="12">
+                <Card>
+                    <p slot="title">
+                        <Icon type="android-remove"></Icon>
+                        请求参数
+                    </p>
+                    <div class="edittable-table-height-con">
+                        <can-edit-table refs="table14" 
+                            :edit-incell="true" 
+                            v-model="tableRequestData" 
+                            :columns-list="tableRequestColumns"></can-edit-table>
+                    </div>
+                </Card>
+            </Col>
+            <Col span="12" class="padding-left-10">
+                <Card>
+                    <p slot="title">
+                        <Icon type="android-more-horizontal"></Icon>
+                        返回结果
+                    </p>
+                    <div class="edittable-table-height-con">
+                        <can-edit-table refs="table3" 
+                            v-model="tableResponseData" 
+                            :hover-show="true" 
+                            :edit-incell="true" 
+                            :columns-list="tableResponseColumns"></can-edit-table>
+                    </div>
+                </Card>
+            </Col>
+        </Row>
+
     </div>
 </template>
 
 <script>
 import canEditTable from '../../components/canEditTable.vue';
 import tableData from '../../components/table_data.js';
+import {
+        getProjectList,
+        getModuleList,
+        getApiList,
+        getRequestList,
+        getResponseList,
+        getDocGenCode
+    } from '../../api/api';
+
+
+
 export default {
     name: 'editable-table',
     components: {
@@ -94,32 +128,69 @@ export default {
     },
     data () {
         return {
+            table0:this,
+            projectIdList:[],
+            moduleIdList:[],
+            apiIdList:[],
+            requestIdList:[],
+            responseIdList:[],
+
+
             tableProjectColumns: [],
             tableProjectData: [],
-            columnsList: [],
-            tableData: [],
-            editInlineColumns: [],
-            editInlineData: [],
-            editIncellColumns: [],
-            editIncellData: [],
-            editInlineAndCellColumn: [],
-            editInlineAndCellData: [],
-            showCurrentColumns: [],
+            tableModuleColumns: [],
+            tableModuleData: [],
+            tableApiColumns: [],
+            tableApiData: [],
+           
+            tableRequestColumns: [],
+            tableRequestData: [],
+
+            tableResponseColumns: [],
+            tableResponseData: [],
+
             showCurrentTableData: false
         };
     },
     methods: {
         getData () {
             this.tableProjectColumns = tableData.tableProjectColumns;
-            this.tableProjectData = tableData.tableProjectData;
-            this.columnsList = tableData.table1Columns;
-            this.tableData = tableData.table1Data;
-            this.editInlineColumns = tableData.editInlineColumns;
-            this.editInlineData = tableData.editInlineData;
-            this.editIncellColumns = tableData.editIncellColumns;
-            this.editIncellData = tableData.editIncellData;
-            this.editInlineAndCellColumn = tableData.editInlineAndCellColumn;
-            this.editInlineAndCellData = tableData.editInlineAndCellData;
+            // this.tableProjectData = tableData.tableProjectData;
+            getProjectList(null).then((res) => {
+                this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableProjectData = res.data.list;
+            });
+
+            this.tableModuleColumns = tableData.tableModuleColumns;
+            getModuleList(null).then((res) => {
+                // this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableModuleData = res.data.list;
+            });
+
+
+            this.tableApiColumns = tableData.tableApiColumns;
+            getApiList(null).then((res) => {
+                // this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableApiData = res.data.list;
+            });
+
+            this.tableRequestColumns = tableData.tableRequestColumns;
+            getRequestList(null).then((res) => {
+                // this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableRequestData = res.data.list;
+            });
+
+            this.tableResponseColumns = tableData.tableResponseColumns;
+            getResponseList(null).then((res) => {
+                // this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableResponseData = res.data.list;
+            });
+
             this.showCurrentColumns = tableData.showCurrentColumns;
         },
         handleNetConnect (state) {
@@ -129,7 +200,16 @@ export default {
             this.lowNetSpeed = state;
         },
         getCurrentData () {
-            this.showCurrentTableData = true;
+            console.log("===apiIdList==="+JSON.stringify(this.tableApiData));
+            // this.showCurrentTableData = true;
+
+            this.apiIdList =  this.tableApiData.map(function (item,index,input) {
+                return item.id;
+            });
+            let para = {
+                apiIdList : this.apiIdList
+            };
+            getDocGenCode(para);
         },
         handleDel (val, index) {
             this.$Message.success('删除了第' + (index + 1) + '行数据');
@@ -139,7 +219,60 @@ export default {
         },
         handleChange (val, index) {
             this.$Message.success('修改了第' + (index + 1) + '行数据');
-        }
+        },
+
+
+        selectionProjectClick(arr) {
+            
+
+            this.projectIdList =  arr.map(function (item,index,input) {
+                return item.id;
+            });
+            let para = {
+                projectIdList : this.projectIdList
+            };
+
+            getModuleList(para).then((res) => {
+                // this.$Loading.finish();
+                // this.total = res.data.totalCount;
+                this.tableModuleData = res.data.list;
+            });
+
+        },
+        selectionModuleClick(arr) {
+            this.moduleIdList =  arr.map(function (item,index,input) {
+                return item.id;
+            });
+
+            let para = {
+                moduleIdList : this.moduleIdList
+            };
+
+            getApiList(para).then((res) => {
+                this.tableApiData = res.data.list;
+            });
+        },
+
+        selectionApiClick(arr) {
+            this.apiIdList =  arr.map(function (item,index,input) {
+                return item.id;
+            });
+            let para = {
+                apiIdList : this.apiIdList
+            };
+
+            // 请求参数
+            getRequestList(para).then((res) => {
+                this.tableRequestData = res.data.list;
+            });
+
+            // 返回结果
+            getResponseList(para).then((res) => {
+                this.tableResponseData = res.data.list;
+            });
+
+        },
+        
     },
     created () {
         this.getData();

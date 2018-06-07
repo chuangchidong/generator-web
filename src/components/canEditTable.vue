@@ -1,7 +1,7 @@
 
 <template>
     <div>
-        <Table :ref="refs" :columns="columnsList" :data="thisTableData" border disabled-hover></Table>
+        <i-table :ref="refs" :columns="columnsList" :data="thisTableData" @on-selection-change ="selectionClick"  border disabled-hover></i-table>
     </div>
 </template>
 
@@ -274,6 +274,10 @@ export default {
                 delete item.saving;
             });
             return clonedData;
+        },
+
+        selectionClick (data) {
+            this.$emit("selectionClick",JSON.parse(JSON.stringify(data)));
         }
     },
     watch: {

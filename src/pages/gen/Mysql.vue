@@ -35,7 +35,6 @@ export default {
             tableColumns: [
                 {
                     type: 'selection',
-                    name: 'selectedItem',
                     width: 60,
                     align: 'center'
                 },
