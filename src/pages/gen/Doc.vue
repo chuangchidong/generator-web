@@ -8,6 +8,11 @@
                         <Icon type="load-b"></Icon>
                         项目列表
                     </p>
+                    <div style="margin: 0 0 10px 5px;overflow: hidden">
+                        <Input v-model="queryTableName" placeholder="输入表名称..." style="width: 300px"></Input> 
+                        <Button type = "ghost" icon="ios-search"  @click="queryList">查询</Button> 
+                        <Button type="primary" icon="arrow-down-a"@click="geneMysqlCode">生成代码</Button>
+                    </div>
                     <div class="edittable-table-height-con">
                         <can-edit-table refs="table0" 
                             :edit-incell="true" 
@@ -44,7 +49,7 @@
                     <Row :gutter="10">
                         <Col span="2">
                             <Row type="flex" justify="center" align="middle" class="edittable-table-get-currentdata-con">
-                                <Button type="primary" @click="getCurrentData">当前数据</Button>
+                                <Button type="primary" @click="getCurrentData">下载当前</Button>
                             </Row>
                         </Col>
                         <Col span="22">
@@ -200,7 +205,6 @@ export default {
             this.lowNetSpeed = state;
         },
         getCurrentData () {
-            console.log("===apiIdList==="+JSON.stringify(this.tableApiData));
             // this.showCurrentTableData = true;
 
             this.apiIdList =  this.tableApiData.map(function (item,index,input) {
